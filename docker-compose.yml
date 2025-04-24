@@ -1,0 +1,55 @@
+services:
+  nginx:
+    image: nginx:alpine
+    #image: nginx:alpine-slim
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./nginx.conf:/etc/nginx/conf.d
+      - ./logs:/var/log/nginx
+      - ./html:/usr/share/nginx/html
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f","-k", "https://localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 20 
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - ./promtail-config/config.yaml:/etc/promtail/config.yaml
+      - ./logs:/var/log/nginx
+    command: ["-config.file=/etc/promtail/config.yaml"]
+    networks:
+      - backend
+    ports:
+       - "9080:9080" 
+
+  loki:
+    image: grafana/loki:latest
+    environment:
+      TZ: ${SYSTEM_TIMEZONE:-Europe/Minsk}
+    ports:
+      - "3100:3100"
+    networks:
+     - backend
+    
+   
+  
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:     
+      - GF_SECURITY_ADMIN_PASSWORD=admin 
+    networks:
+      - backend
+    
+  
+networks:
+  backend:
+    driver: bridge

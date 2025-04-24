@@ -1,0 +1,23 @@
+services:
+  nginx-loki:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3100:3100"
+    networks:
+    - backend
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+     - backend
+
+networks:
+  backend:
+    driver: bridge
+

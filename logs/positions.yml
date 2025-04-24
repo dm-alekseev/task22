@@ -1,0 +1,9 @@
+positions:
+  /var/log/alternatives.log: "4682"
+  /var/log/bootstrap.log: "61229"
+  /var/log/dpkg.log: "178126"
+  /var/log/faillog: "0"
+  /var/log/lastlog: "0"
+  /var/log/nginx/access.log: "9721"
+  /var/log/nginx/access_redblue.log: "242"
+  /var/log/nginx/error.log: "53701"
