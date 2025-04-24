@@ -38,8 +38,29 @@ services:
     networks:
      - backend
     
-   
+  node-exporter:
+    container_name: node-exporter
+    hostname: node  
+    image: prom/node-exporter:latest
+    networks:
+      - backend
+    ports:
+      - 9100:9100    
   
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus  
+    hostname: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus/
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml  
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - backend    
+    ports:
+      - 9091:9090  
+ 
   grafana:
     image: grafana/grafana:latest
     ports:

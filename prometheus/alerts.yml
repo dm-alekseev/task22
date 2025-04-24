@@ -1,0 +1,32 @@
+groups:
+- name: instance_alerts
+  rules:
+  - alert: HighCPU
+    #expr: (100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)) > 90
+    expr: avg(rate(node_cpu_seconds_total{mode="idle"}[1m])) by (instance) < 0.9
+    for: 5m
+    labels:
+      severity: warning
+        #instance: 'node-exporter:9100'
+        #instance: '{{ $labels.instance }}'  
+    annotations:
+      summary: "CPU {{ $value | printf \"%.2f\" }}%! сервер {{ $labels.instance }} перегружен"
+
+  
+  - alert: HighMemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 >10
+    for: 5m
+    labels:
+      severity: critical
+         #instance: '{{ $labels.instance }}'  
+    annotations:
+      summary: "High Memory Usage Detected"
+      description: "Memory usage is above 10% for more than 1 minutes."   
+
+- name: instance_down
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      source: " {{ $labels.instance }} "
